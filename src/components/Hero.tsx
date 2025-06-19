@@ -34,15 +34,14 @@ const Hero: React.FC = () => {
           >
             Step Into
             <motion.span
-              animate={{ 
-                background: [
-                  'linear-gradient(45deg, #3B82F6, #8B5CF6)',
-                  'linear-gradient(45deg, #8B5CF6, #F97316)',
-                  'linear-gradient(45deg, #F97316, #3B82F6)'
-                ]
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500"
+              style={{
+                backgroundSize: '200% 200%',
+                animation: 'gradient-shift 3s ease-in-out infinite'
               }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block"
             >
               Excellence
             </motion.span>

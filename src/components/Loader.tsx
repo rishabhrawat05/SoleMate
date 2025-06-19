@@ -1,47 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
 
-interface LoaderProps {
-  isLoading: boolean;
-}
+const Loader: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+  const [progress, setProgress] = useState(0);
 
-const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
+  useEffect(() => {
+    if (!isLoading) return;
+    let animationFrame: number;
+    const animate = () => {
+      setProgress((prev) => {
+        if (prev < 100) {
+          animationFrame = requestAnimationFrame(animate);
+          return prev + 1;
+        }
+        return 100;
+      });
+    };
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isLoading]);
+
   if (!isLoading) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      animate={{
+        background: [
+          'linear-gradient(45deg, #3B82F6, #8B5CF6)',
+          'linear-gradient(45deg, #8B5CF6, #F97316)',
+          'linear-gradient(45deg, #F97316, #3B82F6)'
+        ]
+      }}
+      transition={{ duration: 6, repeat: Infinity }}
+      style={{ backgroundSize: '200% 200%' }}
     >
-      <div className="text-center">
-        <motion.div
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1, repeat: Infinity }
-          }}
-          className="mb-6"
-        >
-          <Zap className="w-16 h-16 text-yellow-400 mx-auto" />
-        </motion.div>
-        <motion.h2
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-2xl font-bold text-white"
-        >
-          SoleMate
-        </motion.h2>
-        <motion.div
-          animate={{ width: ["0%", "100%", "0%"] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="h-1 bg-yellow-400 rounded-full mt-4 max-w-xs mx-auto"
+      {/* Center bar */}
+      <div className="w-2/5 h-4 rounded-full bg-white/70 shadow-lg">
+        <div
+          className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+          style={{ width: `${progress}%` }}
         />
+      </div>
+      {/* Progress number in bottom-left */}
+      <div className="absolute left-4 bottom-2 text-white text-[80px] font-light select-none drop-shadow-lg">
+        {progress}
       </div>
     </motion.div>
   );
